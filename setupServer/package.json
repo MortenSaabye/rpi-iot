@@ -1,0 +1,9 @@
+{
+  "name": "setup-server",
+  "version": "0.1.0",
+  "dependencies": {
+    "express": "^4.16.3",
+    "node-wifi": "^2.0.4",
+    "nodemon": "^1.17.3"
+  }
+}
