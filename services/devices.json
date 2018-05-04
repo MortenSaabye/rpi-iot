@@ -1,0 +1,36 @@
+{
+    "devices": {
+            "1": {
+                    "id": 1,
+                    "name": "red light",
+                    "path": "red",
+                    "type": "light",
+                    "isOn": true,
+                    "state": ""
+        },
+            "2": {
+                    "id": 2,    
+                    "name": "green light",
+                    "path": "green",
+                    "type": "light",
+                    "isOn": false,
+                    "state": ""
+        },
+            "3": {
+                    "id": 3,
+                    "name": "yellow light",
+                    "path": "yellow",
+                    "type": "light",
+                    "isOn": false,
+                    "state": ""
+        },
+            "4": {
+                    "id": 4,
+                    "name": "display",
+                    "path": "display",
+                    "type": "screen",
+                    "isOn": false,
+                    "state": "asdasdadas"
+        }
+    }
+}
