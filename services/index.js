@@ -1,6 +1,8 @@
 var dnssd = require('dnssd')
 var coap = require('coap')
+var mqtt = require('mqtt')
 var fs = require('fs')
+
 const ad = new dnssd.Advertisement(dnssd.udp('devicecontrol'), 5683,
     {
         name: 'Device Control',
@@ -90,4 +92,19 @@ process.on('SIGINT', function () {
 
 ad.on('stopped', function () {
     process.exit()
+})
+
+var client = mqtt.connect('mqtts://gateway:1234@m21.cloudmqtt.com:29033')
+
+client.on('connect', () => {
+    console.log('connected!')
+    let keys = Object.keys(state.devices)
+    keys.forEach((device) => {
+        client.subscribe(keys)
+    })
+    client.publish('1', 'asdasd')
+})
+
+client.on('message', (topic, message) => {
+    console.log(`${message} published to ${topic}`)
 })
