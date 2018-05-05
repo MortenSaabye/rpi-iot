@@ -40,6 +40,7 @@ function handleRequest(req, res) {
             res.end(`testing ${req.url.split('/')[1]}`)
             break
         case('state'):
+        console.log("update")
             handleStateChange(req, res)
             break
         default:
@@ -60,15 +61,16 @@ function handleStateGet(req, res) {
     })
     console.log(currentState)
     res.end(`{"result": ${JSON.stringify(currentState)}}`)
+    console.log(`{"result": ${JSON.stringify(currentState)}}`)
 }
 
 function handleStateChange(req, res) {
     let device = state.devices[req.url.split('/')[1]]
     let payload = JSON.parse(req.payload.toString())
-    device.isOn = payload[String(device.id)].isOn
-    device.state = payload[String(device.id)].state
-    respayload = [device]
-    res.end(`{"result": ${JSON.stringify(respayload)}}`)
+    device.isOn = payload["isOn"]
+    device.state = payload["state"]
+    res.end(`{"result": ${JSON.stringify(device)}}`)
+    console.log(`{"result": ${JSON.stringify(device)}}`)
 }
 
 function handleDevices(req, res) {
@@ -77,7 +79,7 @@ function handleDevices(req, res) {
     keys.forEach((key) => {
         devices.push(state.devices[key])
     })
-    res.end(`{"result": ${JSON.stringify(devices)}}`)
+    res.end(`{"devices": ${JSON.stringify(devices)}}`)
 }
 
 server.listen(function () {
@@ -100,11 +102,40 @@ client.on('connect', () => {
     console.log('connected!')
     let keys = Object.keys(state.devices)
     keys.forEach((device) => {
-        client.subscribe(keys)
+        client.subscribe(`${device}/state`)
     })
-    client.publish('1', 'asdasd')
+    client.subscribe('state')
 })
 
 client.on('message', (topic, message) => {
-    console.log(`${message} published to ${topic}`)
+    switch(topic) {
+        case('state'): 
+            sendStateForDevices(message)
+        break
+        default:
+            console.log(`${message} published to ${topic}`)
+            let deviceId = topic.split('/')[0]
+            let device = state.devices[deviceId]
+            let jsonString = JSON.parse(message.toString())
+
+            device.isOn = jsonString["isOn"]
+            device.state = jsonString["state"]
+            respayload = device
+            client.publish(`${deviceId}/listen`, `{"result": ${JSON.stringify(respayload)}}`)
+            console.log(JSON.stringify(respayload))
+    }
 })
+
+function sendStateForDevices(message) {
+    let deviceKeys = JSON.parse(message.toString())
+    let currentState = []
+    deviceKeys.forEach((key) => {
+        let device = state.devices[Number(key)]
+        currentState.push({
+            id: device.id,
+            isOn: device.isOn,
+            state: device.state
+        })
+    })
+    client.publish('state/listen', `{"result": ${JSON.stringify(currentState)}}`)
+}
