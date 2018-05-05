@@ -108,4 +108,3 @@ client.on('connect', () => {
 client.on('message', (topic, message) => {
     console.log(`${message} published to ${topic}`)
 })
-aasdas
