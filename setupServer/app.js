@@ -2,7 +2,9 @@ var express = require("express")
 var bodyParser = require("body-parser")
 var shell = require("shelljs")
 var wifi = require('node-raspbian-wifi')
+var fs = require('fs')
 var app = express()
+var mqttPath = './mqttcreds.json'
 const PORT = 3000
 
 app.use(bodyParser.json())
@@ -25,12 +27,24 @@ app.post('/connect', (req, res) => {
 	}
 	console.log(options)
 	res.json({success: "maybe"})
-	shell.exec('/home/pi/iot/dynamicip.sh')
 	shell.exec('sudo systemctl stop hostapd')
 	wifi.connectToWifi(options, (error) => {
 		if(error) {
 			console.log(error) 
 			resetInterface() 
+		}
+	})
+})
+
+app.post('/addmqtt', (req, res) => {
+	let JSONData = JSON.stringify(req.body)
+	console.log(JSONData)
+	fs.writeFile(mqttPath, JSONData, (err) => {
+		if(err) {
+			console.log(err)
+			res.json({success: false, error: error})
+		} else {
+			res.json({success: true, error: "no"})
 		}
 	})
 })

@@ -7,10 +7,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bonjour": "^3.5.0",
-    "coap": "^0.21.0",
-    "dnssd": "^0.3.3"
-  }
+  "license": "ISC"
 }
