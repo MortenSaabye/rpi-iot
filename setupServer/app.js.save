@@ -23,7 +23,7 @@ app.post('/connect', (req, res) => {
 	shell.exec(`wpa_passphrase ${options.ssid} ${options.psk} > /home/pi/wpa.conf`)
 	shell.exec('sudo ifdown wlan0 --force')
 	var up = shell.exec('sudo ifup wlan0')
-	if(up.stderr != '') {
+	if(up.stderr != '') 
 		res.json({success: false, error: up.stderr})
 	} else {
 		res.json({success: true, error: null})
@@ -32,8 +32,10 @@ app.post('/connect', (req, res) => {
 
 app.post('/addmqtt', (req, res) => {
 	let JSONData = JSON.stringify(req.body)
+	console.log(JSONData)
 	fs.writeFile(mqttPath, JSONData, (err) => {
 		if(err) {
+			console.log(err)
 			res.json({success: false, error: error})
 		} else {
 			res.json({success: true, error: "no"})
