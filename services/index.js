@@ -96,18 +96,35 @@ ad.on('stopped', function () {
     process.exit()
 })
 
-var client = mqtt.connect('mqtts://gateway:1234@m21.cloudmqtt.com:29033')
+var client
 
-client.on('connect', () => {
+fs.readFile('../setupServer/mqttcreds.json', (err, data) => {
+    if (err) {
+        console.log( + err)
+    }
+    let authObject = JSON.parse(data.toString())
+    client = mqtt.connect(`mqtts://${authObject.device.user}:${authObject.device.password}@${authObject.server.host}:${authObject.server.port}`)
+
+    client.on('connect', () => {
+        handleConnect(client)
+    })
+
+    client.on('message', (topic, message) => {
+        handleMessage(client, topic, message)
+    })
+})
+
+function handleConnect(client) {
     console.log('connected!')
     let keys = Object.keys(state.devices)
     keys.forEach((device) => {
         client.subscribe(`${device}/state`)
     })
     client.subscribe('state')
-})
+}
 
-client.on('message', (topic, message) => {
+
+function handleMessage(client, topic, message) {
     switch(topic) {
         case('state'): 
             sendStateForDevices(message)
@@ -124,7 +141,7 @@ client.on('message', (topic, message) => {
             client.publish(`${deviceId}/listen`, `{"result": ${JSON.stringify(respayload)}}`)
             console.log(JSON.stringify(respayload))
     }
-})
+}
 
 function sendStateForDevices(message) {
     let deviceKeys = JSON.parse(message.toString())

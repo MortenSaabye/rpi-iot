@@ -1,1 +1,12 @@
-{"user":"morten","port":29033,"server":"m21.cloudmqtt.com","password":"1234"}
+{
+    "device": {
+        "user": "gateway",
+        "password": "1234"
+    },
+    "server": {
+        "port": 29033,
+        "host": "m21.cloudmqtt.com",
+        "user": "hvhuyldx",
+        "password": "vgs5QJsYUmpS"
+    }
+}
