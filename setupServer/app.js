@@ -4,7 +4,7 @@ var shell = require("shelljs")
 var fs = require('fs')
 var request = require('request')
 var app = express()
-var mqttPath = './mqttcreds.json'
+var mqttPath = '/home/pi/rpi-iot/setupServer/mqttcreds.json'
 const PORT = 3000
 
 app.use(bodyParser.json())
@@ -27,13 +27,16 @@ app.post('/connect', (req, res) => {
 	if(up.stderr != '') {
 		res.json({success: false, error: up.stderr})
 	} else {
+		//console.log(res)
 		res.json({success: true, error: null})
 		shell.exec('sudo iw dev ap0 del')
+		shell.exec('forever start /home/pi/rpi-iot/services/index.js')
 	}
 })
 
 app.post('/addmqtt', (req, res) => {
 	let user = req.body
+	console.log(user)
 	fs.readFile(mqttPath, (err, data) => {
 		let mqttInfo = JSON.parse(data.toString()).server
 		console.log(`read the file: ${mqttInfo}`)

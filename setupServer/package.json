@@ -4,6 +4,8 @@
   "dependencies": {
     "express": "^4.16.3",
     "node-wifi": "^2.0.4",
-    "nodemon": "^1.17.3"
+    "nodemon": "^1.17.3",
+    "request": "^2.85.0",
+    "shelljs": "^0.8.1"
   }
 }

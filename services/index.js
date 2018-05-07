@@ -9,7 +9,7 @@ const ad = new dnssd.Advertisement(dnssd.udp('devicecontrol'), 5683,
     })
 ad.start()
 var state
-fs.readFile('./devices.json', (err, data) => {
+fs.readFile('/home/pi/rpi-iot/services/devices.json', (err, data) => {
     if(err) {
         console.log(err)
     }
@@ -98,7 +98,7 @@ ad.on('stopped', function () {
 
 var client
 
-fs.readFile('../setupServer/mqttcreds.json', (err, data) => {
+fs.readFile('/home/pi/rpi-iot/setupServer/mqttcreds.json', (err, data) => {
     if (err) {
         console.log( + err)
     }
