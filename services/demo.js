@@ -1,6 +1,8 @@
 var coap = require('coap')
 
-var req = coap.request('coap://raspberry.local/devices')
+
+var req = coap.request('coap://raspberry.local./devices')
+
 req.method = 'GET'
 req.write(JSON.stringify({
     isOn: true,
