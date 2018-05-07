@@ -27,6 +27,7 @@ app.post('/connect', (req, res) => {
 		res.json({success: false, error: up.stderr})
 	} else {
 		res.json({success: true, error: null})
+		shell.exec('sudo iw dev ap0 del')
 	}
 })
 
