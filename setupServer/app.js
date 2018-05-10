@@ -30,7 +30,7 @@ app.post('/connect', (req, res) => {
 		//console.log(res)
 		res.json({success: true, error: null})
 		shell.exec('sudo iw dev ap0 del')
-		shell.exec('forever start /home/pi/rpi-iot/services/index.js')
+		shell.exec('sudo systemctl start devices')
 	}
 })
 
