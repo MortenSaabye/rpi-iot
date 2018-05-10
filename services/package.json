@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "coap": "^0.21.0"
+    "coap": "^0.21.0",
+    "dnssd": "^0.3.3",
+    "mqtt": "^2.17.0",
+    "node-tradfri": "^0.2.2"
   }
 }

@@ -57,3 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+# coap client for specific platform
+platform-coap-client
+

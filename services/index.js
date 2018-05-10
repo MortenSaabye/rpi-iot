@@ -37,7 +37,7 @@ server.on('request', function (req, res) {
 function handleRequest(req, res) {
     switch(req.url.split('/')[2]) {
         case('test'):
-            res.end(`testing ${req.url.split('/')[1]}`)
+            handleTest(req, res)
             break
         case('state'):
         console.log("update")
@@ -48,29 +48,52 @@ function handleRequest(req, res) {
     }
 }
 
+function handleTest(req, res) {
+    let deviceId = req.url.split('/')[1]
+    let device = state.devices[deviceId]
+    if(device.type == 'tradfri') {
+        tradfri.toggleDevice(deviceId)
+        setTimeout(() => {
+            tradfri.toggleDevice(deviceId)
+        }, 1000)
+    }
+    res.end(`testing ${deviceId}`)
+}
+
 function handleStateGet(req, res) {
-    let deviceKeys = JSON.parse(req.payload.toString())
+    let currentState = getStateForDevices(req.payload)
+    res.end(`{"result": ${JSON.stringify(currentState)}}`)
+}
+
+function sendStateForDevices(message) {
+    let currentState = getStateForDevices(message)
+    client.publish('state/listen', `{"result": ${JSON.stringify(currentState)}}`)
+}
+
+function getStateForDevices(message) {
+    let deviceKeys = JSON.parse(message.toString())
     let currentState = []
     deviceKeys.forEach((key) => {
         let device = state.devices[Number(key)]
         currentState.push({
             id: device.id,
-            isOn: device.isOn,
-            state: device.state
+            on: device.on,
+            brightness: device.brightness,
+            color: device.color
         })
     })
     console.log(currentState)
-    res.end(`{"result": ${JSON.stringify(currentState)}}`)
-    console.log(`{"result": ${JSON.stringify(currentState)}}`)
+    return currentState
 }
 
 function handleStateChange(req, res) {
     let device = state.devices[req.url.split('/')[1]]
     let payload = JSON.parse(req.payload.toString())
-    device.isOn = payload["isOn"]
-    device.state = payload["state"]
+    device.on = payload["on"]
+    device.brightness = payload["brightness"]
+    device.color = payload["color"]
     res.end(`{"result": ${JSON.stringify(device)}}`)
-    console.log(`{"result": ${JSON.stringify(device)}}`)
+    updateDevice(device)
 }
 
 function handleDevices(req, res) {
@@ -115,7 +138,7 @@ fs.readFile('../setupServer/mqttcreds.json', (err, data) => {
 })
 
 function handleConnect(client) {
-    console.log('connected!')
+    console.log('connected to MQTT!')
     let keys = Object.keys(state.devices)
     keys.forEach((device) => {
         client.subscribe(`${device}/state`)
@@ -135,24 +158,48 @@ function handleMessage(client, topic, message) {
             let device = state.devices[deviceId]
             let jsonString = JSON.parse(message.toString())
 
-            device.isOn = jsonString["isOn"]
-            device.state = jsonString["state"]
+            device.on = jsonString["on"]
+            device.color = jsonString["color"]
+            device.brightness = jsonString["brightness"]
             respayload = device
             client.publish(`${deviceId}/listen`, `{"result": ${JSON.stringify(respayload)}}`)
-            console.log(JSON.stringify(respayload))
+            updateDevice(device)
     }
 }
 
-function sendStateForDevices(message) {
-    let deviceKeys = JSON.parse(message.toString())
-    let currentState = []
-    deviceKeys.forEach((key) => {
-        let device = state.devices[Number(key)]
-        currentState.push({
-            id: device.id,
-            isOn: device.isOn,
-            state: device.state
+const tradfri = require('node-tradfri').create({
+    coapClientPath: './platform-coap-client', // use embedded coap-client
+    identity: 'ccfc4ee052ac11e8bf8f8de7346b1847',
+    preSharedKey: 'MooFJS1fYzOLaM5S',
+    hubIpAddress: '192.168.1.126'
+});
+async function getDevicesFromIKEA() {
+    tradfri.getDevices().then(devices => {
+        devices.forEach(device => {
+            if(device.type != 'TRADFRI remote control') {
+                device.type = "tradfri"
+                if(device.color == undefined) { device.color = "" }
+                state.devices[device.id] = device
+            }
         })
+    }).catch(e => {
+        console.log('error: ' + e)
     })
-    client.publish('state/listen', `{"result": ${JSON.stringify(currentState)}}`)
+}
+getDevicesFromIKEA()
+
+function updateDevice(device) {
+    console.log(device)
+    switch (device.type) {
+        case ('tradfri'):
+        console.log('update tradfri')
+            updateTradfriDevice(device)
+            break
+        default:
+            console.log('homemade device')
+    }
+}
+
+function updateTradfriDevice(device) {
+    tradfri.setDeviceState(device.id, { state: device.on, brightness: device.brightness, color: device.color })
 }
