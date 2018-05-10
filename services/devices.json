@@ -6,7 +6,7 @@
                     "path": "red",
                     "type": "light",
                     "on": true,
-                    "color": "",
+                    "color": "ff3300",
                     "brightness": 100
         },
             "2": {
@@ -15,7 +15,7 @@
                     "path": "green",
                     "type": "light",
                     "on": false,
-                    "color": "",
+                    "color": "33cc33",
                     "brightness": 100
         },
             "3": {
@@ -24,7 +24,7 @@
                     "path": "yellow",
                     "type": "light",
                     "on": false,
-                    "color": "",
+                    "color": "ffff00",
                     "brightness": 100
         }
     }
