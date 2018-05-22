@@ -24,10 +24,12 @@ app.post('/connect', (req, res) => {
 	shell.exec(`wpa_passphrase ${options.ssid} ${options.psk} > /home/pi/wpa.conf`)
 	shell.exec('sudo ifdown wlan0 --force')
 	var up = shell.exec('sudo ifup wlan0')
+
 	if(up.stderr != '') {
+		console.log('Error occured')
 		res.json({success: false, error: up.stderr})
 	} else {
-		//console.log(res)
+		console.log('connection success')
 		res.json({success: true, error: null})
 		shell.exec('sudo iw dev ap0 del')
 		shell.exec('sudo systemctl start devices')
@@ -80,3 +82,4 @@ function createMQTTUser(user, mqttInfo, res) {
 	console.log(options)
 	request(options, callback)
 }
+

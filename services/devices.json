@@ -5,7 +5,7 @@
                     "name": "red light",
                     "path": "red",
                     "type": "light",
-                    "on": true,
+                    "on": false,
                     "color": "ff3300",
                     "brightness": 100
         },

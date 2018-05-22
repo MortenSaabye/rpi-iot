@@ -12,6 +12,7 @@
     "coap": "^0.21.0",
     "dnssd": "^0.3.3",
     "mqtt": "^2.17.0",
-    "node-tradfri": "^0.2.2"
+    "node-tradfri": "^0.2.2",
+    "pigpio": "^1.0.0"
   }
 }

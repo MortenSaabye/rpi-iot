@@ -1,5 +1,5 @@
 var coap = require('coap')
-
+var gpio = require('./gpio.js')
 
 var req = coap.request('coap://raspberry.local./devices')
 
