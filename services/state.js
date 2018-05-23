@@ -9,8 +9,8 @@ state.loadState = function(callback) {
             console.log(err)
         }
         state.devices = JSON.parse(data.toString()).devices
-        tradfri.getDevicesFromIKEA(state, (state) => {
-            callback(state)
+        tradfri.getDevicesFromIKEA(state, () => {
+            callback()
         })
     })
 }

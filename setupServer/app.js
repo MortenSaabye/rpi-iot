@@ -6,9 +6,10 @@ var request = require('request')
 var app = express()
 var mqttPath = '/home/pi/rpi-iot/setupServer/mqttcreds.json'
 const PORT = 3000
+var timeout = require('connect-timeout')
 
 app.use(bodyParser.json())
-
+app.use(timeout(60000))
 app.get('/getwifiinfo', (req, res) => {
 	console.log('getting info')
 	

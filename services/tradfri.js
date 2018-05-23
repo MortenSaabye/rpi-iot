@@ -27,9 +27,9 @@ tradfriExp.updateTradfriDevice = function(device) {
 
 tradfriExp.testTradfriDevice = function(deviceId) {
     console.log('testing' + deviceId)
-    tradfriExp.toggleDevice(deviceId)
+    tradfri.toggleDevice(deviceId)
     setTimeout(() => {
-        tradfriExp.toggleDevice(deviceId)
+        tradfri.toggleDevice(deviceId)
     }, 1000)
 }
 
