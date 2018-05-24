@@ -1,0 +1,5 @@
+interface=ap0
+ssid=Device gateway AP
+hw_mode=g
+channel=6
+driver=nl80211
